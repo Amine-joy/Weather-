@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>أحوال الطقس - الجزائر</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            background: #f2f2f2;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        select, button {
+            padding: 12px;
+            width: 100%;
+            margin: 10px 0;
+            font-size: 16px;
+            border-radius: 8px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table th, table td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background: #0099cc;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>توقعات الطقس في ولايات الجزائر (10 أيام)</h2>
+
+        <select id="stateSelect">
+            <option value="Algiers">الجزائر العاصمة</option>
+            <option value="Oran">وهران</option>
+            <option value="Tlemcen">تلمسان</option>
+            <option value="Setif">سطيف</option>
+            <option value="Annaba">عنابة</option>
+            <option value="Tizi Ouzou">تيزي وزو</option>
+            <option value="Batna">باتنة</option>
+            <option value="Constantine">قسنطينة</option>
+        </select>
+
+        <button onclick="getWeather()">عرض التوقعات</button>
+
+        <table id="resultTable" style="display:none;">
+            <thead>
+                <tr>
+                    <th>اليوم</th>
+                    <th>العظمى</th>
+                    <th>الصغرى</th>
+                    <th>الطقس</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+<script>
+async function getWeather() {
+    const state = document.getElementById("stateSelect").value;
+    const apiKey = "YOUR_KEY"; // ضع مفتاح WeatherAPI هنا
+
+    const url = `https://api.weatherapi.com/v1/forecast.json?key=${apiKey}&q=${state}&days=10&lang=ar`;
+
+    const response = await fetch(url);
+    const data = await response.json();
+
+    const table = document.getElementById("resultTable");
+    const tbody = table.querySelector("tbody");
+    tbody.innerHTML = "";
+
+    data.forecast.forecastday.forEach(day => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+            <td>${day.date}</td>
+            <td>${day.day.maxtemp_c}°</td>
+            <td>${day.day.mintemp_c}°</td>
+            <td>${day.day.condition.text}</td>
+        `;
+        tbody.appendChild(tr);
+    });
+
+    table.style.display = "table";
+}
+</script>
+</body>
+</html>
